@@ -1,0 +1,276 @@
+{
+  "entities": {
+    "LessonProgress": {
+      "title": "Lesson Progress",
+      "description": "Tracks a learner's completed English lesson stored in Cloud Firestore to power the real-time motivational Progress Bar.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated Google user UID owning this lesson completion record."
+        },
+        "levelCode": {
+          "type": "string",
+          "enum": ["A1", "A2", "B1", "B2", "C1", "C2"],
+          "description": "CEFR level code of the completed lesson."
+        },
+        "titleAr": {
+          "type": "string",
+          "description": "Arabic title of the completed lesson for display and history."
+        },
+        "completed": {
+          "type": "boolean",
+          "description": "Completion flag for the lesson."
+        },
+        "completedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp (FieldValue.serverTimestamp()) when the lesson was first marked complete."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp (FieldValue.serverTimestamp()) of the most recent update."
+        }
+      },
+      "required": ["userId", "levelCode", "titleAr", "completed", "completedAt", "updatedAt"]
+    },
+    "DailyWord": {
+      "title": "Daily Word",
+      "description": "Stores the user's Word of the Day ('كلمة اليوم') card, pronunciation listen counter, and practice completion status in Cloud Firestore.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated Google user UID owning this daily word entry."
+        },
+        "wordEn": {
+          "type": "string",
+          "description": "English Word of the Day."
+        },
+        "ipa": {
+          "type": "string",
+          "description": "IPA phonetic transcription of the word."
+        },
+        "partOfSpeechAr": {
+          "type": "string",
+          "description": "Arabic part of speech label."
+        },
+        "meaningAr": {
+          "type": "string",
+          "description": "Concise Arabic translation of the word."
+        },
+        "exampleEn": {
+          "type": "string",
+          "description": "English example sentence using the Word of the Day."
+        },
+        "exampleAr": {
+          "type": "string",
+          "description": "Arabic translation of the example sentence."
+        },
+        "levelCode": {
+          "type": "string",
+          "enum": ["A1", "A2", "B1", "B2", "C1", "C2"],
+          "description": "CEFR level code of the word."
+        },
+        "practiced": {
+          "type": "boolean",
+          "description": "Whether the learner marked today's word as practiced/mastered."
+        },
+        "listenCount": {
+          "type": "integer",
+          "description": "Number of times the user listened to the pronunciation."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp (FieldValue.serverTimestamp()) when the daily word entry was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp (FieldValue.serverTimestamp()) of the latest engagement."
+        }
+      },
+      "required": [
+        "userId",
+        "wordEn",
+        "ipa",
+        "partOfSpeechAr",
+        "meaningAr",
+        "exampleEn",
+        "exampleAr",
+        "levelCode",
+        "practiced",
+        "listenCount",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "QuizQuestion": {
+      "title": "Lesson Quiz Question",
+      "description": "Stores post-lesson quick quiz questions in Cloud Firestore.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated Google user UID owning this quiz question record."
+        },
+        "lessonId": {
+          "type": "string",
+          "description": "ID of the lesson this question belongs to."
+        },
+        "orderIndex": {
+          "type": "integer",
+          "description": "Display order within the lesson quiz."
+        },
+        "promptAr": {
+          "type": "string",
+          "description": "Arabic instruction/question prompt."
+        },
+        "englishPrompt": {
+          "type": "string",
+          "description": "English sentence or prompt for the question."
+        },
+        "options": {
+          "type": "array",
+          "description": "Bounded list of multiple-choice answer options (2 to 6)."
+        },
+        "correctIndex": {
+          "type": "integer",
+          "description": "Zero-based index of the correct option."
+        },
+        "explanationAr": {
+          "type": "string",
+          "description": "Arabic explanation shown immediately after answering."
+        },
+        "levelCode": {
+          "type": "string",
+          "enum": ["A1", "A2", "B1", "B2", "C1", "C2"],
+          "description": "CEFR level code of the question."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp (FieldValue.serverTimestamp()) when stored."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp (FieldValue.serverTimestamp()) of the last update."
+        }
+      },
+      "required": [
+        "userId",
+        "lessonId",
+        "orderIndex",
+        "promptAr",
+        "englishPrompt",
+        "options",
+        "correctIndex",
+        "explanationAr",
+        "levelCode",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "QuizResult": {
+      "title": "Lesson Quiz Result",
+      "description": "Stores a learner's post-lesson quick quiz evaluation result, best score, and attempt count in Cloud Firestore.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated Google user UID owning this quiz result."
+        },
+        "lessonTitleAr": {
+          "type": "string",
+          "description": "Arabic title of the lesson."
+        },
+        "levelCode": {
+          "type": "string",
+          "enum": ["A1", "A2", "B1", "B2", "C1", "C2"],
+          "description": "CEFR level code of the lesson."
+        },
+        "correctCount": {
+          "type": "integer",
+          "description": "Number of correct answers in the latest attempt."
+        },
+        "totalCount": {
+          "type": "integer",
+          "description": "Total number of questions in the quiz."
+        },
+        "scorePercent": {
+          "type": "integer",
+          "description": "Percentage score (0-100) of the latest attempt."
+        },
+        "bestScorePercent": {
+          "type": "integer",
+          "description": "Highest percentage score (0-100) achieved across attempts."
+        },
+        "attemptCount": {
+          "type": "integer",
+          "description": "Total number of completed quiz attempts for this lesson."
+        },
+        "masteryLabelAr": {
+          "type": "string",
+          "description": "Arabic instant comprehension evaluation label."
+        },
+        "passed": {
+          "type": "boolean",
+          "description": "Whether the learner achieved the passing threshold (>= 60%)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp (FieldValue.serverTimestamp()) of first attempt."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp (FieldValue.serverTimestamp()) of latest attempt."
+        }
+      },
+      "required": [
+        "userId",
+        "lessonTitleAr",
+        "levelCode",
+        "correctCount",
+        "totalCount",
+        "scorePercent",
+        "bestScorePercent",
+        "attemptCount",
+        "masteryLabelAr",
+        "passed",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/lessonProgress/{lessonId}": {
+      "schema": {
+        "$ref": "#/entities/LessonProgress"
+      },
+      "description": "User-scoped subcollection storing completed lesson records keyed by lessonId."
+    },
+    "/users/{userId}/dailyWords/{dateKey}": {
+      "schema": {
+        "$ref": "#/entities/DailyWord"
+      },
+      "description": "User-scoped subcollection storing Word of the Day ('كلمة اليوم') cards and engagement stats keyed by yyyy-MM-dd."
+    },
+    "/users/{userId}/quizQuestions/{questionId}": {
+      "schema": {
+        "$ref": "#/entities/QuizQuestion"
+      },
+      "description": "User-scoped subcollection storing post-lesson quiz questions queried by lessonId."
+    },
+    "/users/{userId}/quizResults/{lessonId}": {
+      "schema": {
+        "$ref": "#/entities/QuizResult"
+      },
+      "description": "User-scoped subcollection storing instant post-lesson quiz evaluation results keyed by lessonId."
+    }
+  }
+}

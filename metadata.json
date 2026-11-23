@@ -1,0 +1,6 @@
+{
+  "name": "رفيق الإنجليزية",
+  "description": "تطبيق تعليمي مبسط وممتع لتعلم اللغة الإنجليزية من الصفر حتى الإتقان مع صوتيات ناطقة وخارطة ذهنية تفاعلية ومرشد ذكي.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

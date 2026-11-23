@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">رفيق الإنجليزية</string>
+    <string name="nav_mind_map">الخارطة</string>
+    <string name="nav_lessons">الدروس</string>
+    <string name="nav_phonetics">الصوتيات</string>
+    <string name="nav_mentor">المرشد</string>
+
+    <string name="cd_back">العودة</string>
+    <string name="cd_play_audio">تشغيل النطق الصوتي</string>
+    <string name="cd_stop_audio">إيقاف الصوت</string>
+    <string name="cd_speed_toggle">تبديل سرعة النطق</string>
+    <string name="cd_send_message">إرسال الرسالة</string>
+    <string name="cd_bookmark">حفظ الجملة</string>
+    <string name="cd_complete_lesson">تحديد الدرس كمكتمل</string>
+    <string name="cd_reset_zoom">إعادة ضبط الخارطة</string>
+
+    <string name="study_mode_normal">يوم عادي • 25 دقيقة</string>
+    <string name="study_mode_heavy">يوم مضغوط • 5 دقائق</string>
+    <string name="speed_normal">سرعة عادية 1.0x</string>
+    <string name="speed_slow">نطق بطيء 0.7x</string>
+    <string name="ai_mentor_hint">اسأل المرشد باللغة العربية أو اكتب جملة إنجليزية لتصحيحها...</string>
+
+    <string name="reminder_channel_name">تذكير المذاكرة اليومي</string>
+    <string name="reminder_channel_description">إشعارات محلية يومية لتحفيزك على متابعة تعلّم الإنجليزية</string>
+    <string name="cd_daily_reminder">إعدادات التذكير اليومي</string>
+</resources>

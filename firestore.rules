@@ -1,0 +1,227 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidLessonProgress(data, userId) {
+      return data.userId is string &&
+             data.userId == userId &&
+             data.levelCode is string &&
+             data.levelCode in ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] &&
+             data.titleAr is string &&
+             data.titleAr.size() >= 1 &&
+             data.titleAr.size() <= 120 &&
+             data.completed is bool &&
+             data.completedAt is timestamp &&
+             data.completedAt <= request.time &&
+             data.updatedAt is timestamp &&
+             data.updatedAt <= request.time;
+    }
+
+    function isValidDailyWord(data, userId) {
+      return data.userId is string &&
+             data.userId == userId &&
+             data.wordEn is string &&
+             data.wordEn.size() >= 1 &&
+             data.wordEn.size() <= 60 &&
+             data.ipa is string &&
+             data.ipa.size() >= 1 &&
+             data.ipa.size() <= 80 &&
+             data.partOfSpeechAr is string &&
+             data.partOfSpeechAr.size() >= 1 &&
+             data.partOfSpeechAr.size() <= 40 &&
+             data.meaningAr is string &&
+             data.meaningAr.size() >= 1 &&
+             data.meaningAr.size() <= 120 &&
+             data.exampleEn is string &&
+             data.exampleEn.size() >= 1 &&
+             data.exampleEn.size() <= 240 &&
+             data.exampleAr is string &&
+             data.exampleAr.size() >= 1 &&
+             data.exampleAr.size() <= 240 &&
+             data.levelCode is string &&
+             data.levelCode in ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] &&
+             data.practiced is bool &&
+             data.listenCount is int &&
+             data.listenCount >= 0 &&
+             data.listenCount <= 100000 &&
+             data.createdAt is timestamp &&
+             data.createdAt <= request.time &&
+             data.updatedAt is timestamp &&
+             data.updatedAt <= request.time;
+    }
+
+    function isValidQuizQuestion(data, userId) {
+      return data.userId is string &&
+             data.userId == userId &&
+             data.lessonId is string &&
+             isValidId(data.lessonId) &&
+             data.orderIndex is int &&
+             data.orderIndex >= 0 &&
+             data.orderIndex <= 100 &&
+             data.promptAr is string &&
+             data.promptAr.size() >= 1 &&
+             data.promptAr.size() <= 240 &&
+             data.englishPrompt is string &&
+             data.englishPrompt.size() >= 1 &&
+             data.englishPrompt.size() <= 300 &&
+             data.options is list &&
+             data.options.size() >= 2 &&
+             data.options.size() <= 6 &&
+             data.options[0] is string &&
+             data.correctIndex is int &&
+             data.correctIndex >= 0 &&
+             data.correctIndex < data.options.size() &&
+             data.explanationAr is string &&
+             data.explanationAr.size() >= 1 &&
+             data.explanationAr.size() <= 320 &&
+             data.levelCode is string &&
+             data.levelCode in ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] &&
+             data.createdAt is timestamp &&
+             data.createdAt <= request.time &&
+             data.updatedAt is timestamp &&
+             data.updatedAt <= request.time;
+    }
+
+    function isValidQuizResult(data, userId) {
+      return data.userId is string &&
+             data.userId == userId &&
+             data.lessonTitleAr is string &&
+             data.lessonTitleAr.size() >= 1 &&
+             data.lessonTitleAr.size() <= 120 &&
+             data.levelCode is string &&
+             data.levelCode in ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] &&
+             data.correctCount is int &&
+             data.correctCount >= 0 &&
+             data.totalCount is int &&
+             data.totalCount >= 1 &&
+             data.totalCount <= 100 &&
+             data.correctCount <= data.totalCount &&
+             data.scorePercent is int &&
+             data.scorePercent >= 0 &&
+             data.scorePercent <= 100 &&
+             data.bestScorePercent is int &&
+             data.bestScorePercent >= 0 &&
+             data.bestScorePercent <= 100 &&
+             data.attemptCount is int &&
+             data.attemptCount >= 1 &&
+             data.attemptCount <= 10000 &&
+             data.masteryLabelAr is string &&
+             data.masteryLabelAr.size() >= 1 &&
+             data.masteryLabelAr.size() <= 100 &&
+             data.passed is bool &&
+             data.createdAt is timestamp &&
+             data.createdAt <= request.time &&
+             data.updatedAt is timestamp &&
+             data.updatedAt <= request.time;
+    }
+
+    match /users/{userId} {
+      allow read, write: if false;
+
+      match /lessonProgress/{lessonId} {
+        allow get: if isOwner(userId) && isValidId(lessonId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(lessonId) &&
+                         incoming().keys().hasAll(['userId', 'levelCode', 'titleAr', 'completed', 'completedAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['userId', 'levelCode', 'titleAr', 'completed', 'completedAt', 'updatedAt']) &&
+                         isValidLessonProgress(incoming(), userId);
+
+        allow update: if isOwner(userId) &&
+                         isValidId(lessonId) &&
+                         isValidLessonProgress(incoming(), userId) &&
+                         incoming().userId == existing().userId &&
+                         incoming().completedAt == existing().completedAt &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['levelCode', 'titleAr', 'completed', 'updatedAt']);
+
+        allow delete: if isOwner(userId) && isValidId(lessonId);
+      }
+
+      match /dailyWords/{dateKey} {
+        allow get: if isOwner(userId) && isValidId(dateKey);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(dateKey) &&
+                         incoming().keys().hasAll(['userId', 'wordEn', 'ipa', 'partOfSpeechAr', 'meaningAr', 'exampleEn', 'exampleAr', 'levelCode', 'practiced', 'listenCount', 'createdAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['userId', 'wordEn', 'ipa', 'partOfSpeechAr', 'meaningAr', 'exampleEn', 'exampleAr', 'levelCode', 'practiced', 'listenCount', 'createdAt', 'updatedAt']) &&
+                         isValidDailyWord(incoming(), userId);
+
+        allow update: if isOwner(userId) &&
+                         isValidId(dateKey) &&
+                         isValidDailyWord(incoming(), userId) &&
+                         incoming().userId == existing().userId &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['wordEn', 'ipa', 'partOfSpeechAr', 'meaningAr', 'exampleEn', 'exampleAr', 'levelCode', 'practiced', 'listenCount', 'updatedAt']);
+
+        allow delete: if isOwner(userId) && isValidId(dateKey);
+      }
+
+      match /quizQuestions/{questionId} {
+        allow get: if isOwner(userId) && isValidId(questionId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(questionId) &&
+                         incoming().keys().hasAll(['userId', 'lessonId', 'orderIndex', 'promptAr', 'englishPrompt', 'options', 'correctIndex', 'explanationAr', 'levelCode', 'createdAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['userId', 'lessonId', 'orderIndex', 'promptAr', 'englishPrompt', 'options', 'correctIndex', 'explanationAr', 'levelCode', 'createdAt', 'updatedAt']) &&
+                         isValidQuizQuestion(incoming(), userId);
+
+        allow update: if isOwner(userId) &&
+                         isValidId(questionId) &&
+                         isValidQuizQuestion(incoming(), userId) &&
+                         incoming().userId == existing().userId &&
+                         incoming().lessonId == existing().lessonId &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['orderIndex', 'promptAr', 'englishPrompt', 'options', 'correctIndex', 'explanationAr', 'levelCode', 'updatedAt']);
+
+        allow delete: if isOwner(userId) && isValidId(questionId);
+      }
+
+      match /quizResults/{lessonId} {
+        allow get: if isOwner(userId) && isValidId(lessonId);
+        allow list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(lessonId) &&
+                         incoming().keys().hasAll(['userId', 'lessonTitleAr', 'levelCode', 'correctCount', 'totalCount', 'scorePercent', 'bestScorePercent', 'attemptCount', 'masteryLabelAr', 'passed', 'createdAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['userId', 'lessonTitleAr', 'levelCode', 'correctCount', 'totalCount', 'scorePercent', 'bestScorePercent', 'attemptCount', 'masteryLabelAr', 'passed', 'createdAt', 'updatedAt']) &&
+                         isValidQuizResult(incoming(), userId);
+
+        allow update: if isOwner(userId) &&
+                         isValidId(lessonId) &&
+                         isValidQuizResult(incoming(), userId) &&
+                         incoming().userId == existing().userId &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['lessonTitleAr', 'levelCode', 'correctCount', 'totalCount', 'scorePercent', 'bestScorePercent', 'attemptCount', 'masteryLabelAr', 'passed', 'updatedAt']);
+
+        allow delete: if isOwner(userId) && isValidId(lessonId);
+      }
+    }
+  }
+}

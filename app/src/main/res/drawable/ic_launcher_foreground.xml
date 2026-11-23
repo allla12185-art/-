@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Subtle shadow under emblem -->
+    <path
+        android:fillColor="#3309132B"
+        android:pathData="M27,41 C37,36 47,38 54,43 C61,38 71,36 81,41 L81,72 C71,68 61,70 54,75 C47,70 37,68 27,72 Z" />
+
+    <!-- Open book left page -->
+    <path
+        android:fillColor="#FFFDF8"
+        android:pathData="M26,39 C36,34 46,36 53,41 L53,72 C46,67 36,65 26,69 Z" />
+
+    <!-- Open book right page -->
+    <path
+        android:fillColor="#E2F1EE"
+        android:pathData="M82,39 C72,34 62,36 55,41 L55,72 C62,67 72,65 82,69 Z" />
+
+    <!-- Center spine -->
+    <path
+        android:fillColor="#14B8A6"
+        android:pathData="M53,40 L55,40 L55,73 L53,73 Z" />
+
+    <!-- Left page crisp lines -->
+    <path
+        android:fillColor="#0F766E"
+        android:pathData="M31,47 L48,49 L48,51.5 L31,49.5 Z" />
+    <path
+        android:fillColor="#0F766E"
+        android:pathData="M31,54 L48,56 L48,58.5 L31,56.5 Z" />
+
+    <!-- Right page soundwave bars -->
+    <path
+        android:fillColor="#1A2B5B"
+        android:pathData="M61,51 L63.5,51 L63.5,60 L61,60 Z" />
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M66.5,47 L69,47 L69,62 L66.5,62 Z" />
+    <path
+        android:fillColor="#1A2B5B"
+        android:pathData="M72,50 L74.5,50 L74.5,59 L72,59 Z" />
+
+    <!-- Mind-map crest / spark node above the book -->
+    <path
+        android:strokeColor="#FBBF24"
+        android:strokeWidth="2.4"
+        android:strokeLineCap="round"
+        android:pathData="M54,37 L54,28 M54,32 L41,27 M54,32 L67,27" />
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M54,22 A4.5,4.5 0 1,1 53.99,22 Z" />
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M39,24 A3.2,3.2 0 1,1 38.99,24 Z" />
+    <path
+        android:fillColor="#34D399"
+        android:pathData="M69,24 A3.2,3.2 0 1,1 68.99,24 Z" />
+</vector>
